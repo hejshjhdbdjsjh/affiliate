@@ -4,21 +4,29 @@ import { useAuth } from '../context/AuthContext';
 export default function Navbar() {
   const { user, logout } = useAuth();
   return (
-    <nav className="bg-indigo-700 text-white p-4 shadow-lg">
-      <div className="container mx-auto flex justify-between items-center flex-wrap gap-3">
-        <Link to="/" className="text-2xl font-bold">CopyAffiliates</Link>
-        <div className="space-x-4 text-sm md:text-base">
-          <Link to="/affiliates">Top Affiliates</Link>
+    <nav className="fixed top-0 left-0 w-full z-50 glass border-b border-white/10 shadow-sm">
+      <div className="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
+        <Link to="/" className="text-2xl font-extrabold tracking-tight text-gradient">
+          CopyAffiliates
+        </Link>
+        <div className="flex items-center gap-4 text-sm font-medium">
+          <Link to="/affiliates" className="text-slate-600 hover:text-indigo-600 transition">Top Affiliates</Link>
           {user ? (
             <>
-              <Link to="/dashboard">Dashboard</Link>
-              {user.email === 'admin@copy.com' && <Link to="/admin">Admin</Link>}
-              <button onClick={logout} className="bg-red-500 px-3 py-1 rounded hover:bg-red-600">Logout</button>
+              <Link to="/dashboard" className="text-slate-600 hover:text-indigo-600 transition">Dashboard</Link>
+              {user.email === 'admin@copy.com' && (
+                <Link to="/admin" className="text-amber-600 hover:text-amber-700 transition">Admin</Link>
+              )}
+              <button onClick={logout} className="bg-red-500/80 hover:bg-red-600 text-white px-4 py-1.5 rounded-full text-sm transition shadow-md">
+                Logout
+              </button>
             </>
           ) : (
             <>
-              <Link to="/login" className="bg-white text-indigo-700 px-3 py-1 rounded">Login</Link>
-              <Link to="/signup" className="bg-green-500 px-3 py-1 rounded hover:bg-green-600">Sign Up</Link>
+              <Link to="/login" className="text-slate-600 hover:text-indigo-600 transition">Login</Link>
+              <Link to="/signup" className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-full text-sm transition shadow-md">
+                Sign Up
+              </Link>
             </>
           )}
         </div>
