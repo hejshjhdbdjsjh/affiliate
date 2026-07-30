@@ -31,4 +31,3 @@ function generateAffiliates(count = 100) {
 }
 
 export const affiliates = generateAffiliates();
-```
