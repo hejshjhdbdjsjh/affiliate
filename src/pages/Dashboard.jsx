@@ -9,20 +9,25 @@ export default function Dashboard() {
   const [withdrawAmt, setWithdrawAmt] = useState('');
   const [msg, setMsg] = useState('');
 
-  if (!user) return <div className="text-center py-20">Please <Link to="/login" className="text-indigo-600 underline">login</Link> to view dashboard.</div>;
+  if (!user) {
+    return (
+      <div className="pt-32 text-center">
+        <p className="text-slate-500">Please <Link to="/login" className="text-indigo-600 underline font-semibold">login</Link> to view your dashboard.</p>
+      </div>
+    );
+  }
 
   const copiedAffiliates = affiliates.filter(a => user.copied?.includes(a.id));
 
   const handleDeposit = () => {
     const amt = parseFloat(depositAmt);
     if (!amt || amt <= 0) return setMsg('Enter a valid amount.');
-    // mock pending request (stored in user)
     const updated = {
       ...user,
       deposits: [...(user.deposits || []), { amount: amt, status: 'pending', date: new Date().toISOString() }]
     };
     updateUser(updated);
-    setMsg(`Deposit request of $${amt} submitted (pending approval).`);
+    setMsg(`✅ Deposit request of $${amt} submitted (pending approval).`);
     setDepositAmt('');
   };
 
@@ -35,71 +40,76 @@ export default function Dashboard() {
       withdrawals: [...(user.withdrawals || []), { amount: amt, status: 'pending', date: new Date().toISOString() }]
     };
     updateUser(updated);
-    setMsg(`Withdrawal request of $${amt} submitted (pending approval).`);
+    setMsg(`✅ Withdrawal request of $${amt} submitted (pending approval).`);
     setWithdrawAmt('');
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8">
-      <h1 className="text-3xl font-bold text-gray-800">My Dashboard</h1>
+    <div className="max-w-6xl mx-auto pt-24 pb-12 px-4">
+      <h1 className="text-4xl font-extrabold text-slate-800 mb-8">My Dashboard</h1>
 
-      {/* Balance card */}
-      <div className="bg-gradient-to-r from-indigo-700 to-indigo-900 text-white p-6 rounded-2xl shadow-lg flex flex-wrap justify-between items-center">
-        <div>
-          <p className="text-sm opacity-80">Available Balance</p>
-          <p className="text-4xl font-bold">${user.balance.toLocaleString()}</p>
+      {/* Balance card - glass */}
+      <div className="glass rounded-3xl p-8 border border-white/40 shadow-2xl bg-gradient-to-br from-indigo-900/10 to-purple-900/10">
+        <div className="flex flex-wrap justify-between items-center gap-6">
+          <div>
+            <p className="text-sm uppercase tracking-wider text-slate-500">Available Balance</p>
+            <p className="text-5xl font-extrabold text-slate-800">${user.balance.toLocaleString()}</p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <input
+              type="number"
+              placeholder="Amount"
+              value={depositAmt}
+              onChange={(e) => setDepositAmt(e.target.value)}
+              className="w-28 px-4 py-2.5 rounded-full border border-slate-200 bg-white/50 backdrop-blur text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            />
+            <button onClick={handleDeposit} className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2.5 rounded-full font-semibold shadow-md transition">
+              Deposit
+            </button>
+            <input
+              type="number"
+              placeholder="Amount"
+              value={withdrawAmt}
+              onChange={(e) => setWithdrawAmt(e.target.value)}
+              className="w-28 px-4 py-2.5 rounded-full border border-slate-200 bg-white/50 backdrop-blur text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            />
+            <button onClick={handleWithdraw} className="bg-amber-500 hover:bg-amber-600 text-white px-6 py-2.5 rounded-full font-semibold shadow-md transition">
+              Withdraw
+            </button>
+          </div>
         </div>
-        <div className="flex gap-3 flex-wrap mt-2 sm:mt-0">
-          <input
-            type="number"
-            placeholder="Amount"
-            value={depositAmt}
-            onChange={(e) => setDepositAmt(e.target.value)}
-            className="w-28 px-3 py-2 rounded text-gray-800"
-          />
-          <button onClick={handleDeposit} className="bg-emerald-500 hover:bg-emerald-600 px-4 py-2 rounded font-semibold">Deposit</button>
-          <input
-            type="number"
-            placeholder="Amount"
-            value={withdrawAmt}
-            onChange={(e) => setWithdrawAmt(e.target.value)}
-            className="w-28 px-3 py-2 rounded text-gray-800"
-          />
-          <button onClick={handleWithdraw} className="bg-amber-500 hover:bg-amber-600 px-4 py-2 rounded font-semibold">Withdraw</button>
-        </div>
+        {msg && <p className="mt-4 text-center text-sm font-medium text-slate-700 bg-white/50 p-3 rounded-xl">{msg}</p>}
       </div>
-      {msg && <p className="text-center font-medium text-gray-700 bg-gray-100 p-2 rounded">{msg}</p>}
 
       {/* Pending requests summary */}
-      <div className="grid grid-cols-2 gap-4 text-sm">
-        <div className="bg-white p-4 rounded-xl shadow border border-gray-200">
-          <p className="text-gray-500">Pending deposits</p>
-          <p className="text-xl font-bold text-emerald-600">
-            {user.deposits?.filter(d => d.status === 'pending').length || 0}
-          </p>
+      <div className="grid grid-cols-2 gap-4 mt-6">
+        <div className="glass rounded-2xl p-5 border border-white/30 text-center">
+          <p className="text-slate-500 text-sm">Pending Deposits</p>
+          <p className="text-2xl font-bold text-emerald-600">{user.deposits?.filter(d => d.status === 'pending').length || 0}</p>
         </div>
-        <div className="bg-white p-4 rounded-xl shadow border border-gray-200">
-          <p className="text-gray-500">Pending withdrawals</p>
-          <p className="text-xl font-bold text-amber-600">
-            {user.withdrawals?.filter(w => w.status === 'pending').length || 0}
-          </p>
+        <div className="glass rounded-2xl p-5 border border-white/30 text-center">
+          <p className="text-slate-500 text-sm">Pending Withdrawals</p>
+          <p className="text-2xl font-bold text-amber-600">{user.withdrawals?.filter(w => w.status === 'pending').length || 0}</p>
         </div>
       </div>
 
-      {/* Copied affiliates list */}
-      <div>
-        <h2 className="text-2xl font-semibold text-gray-700 mb-4">Your Copied Affiliates ({copiedAffiliates.length})</h2>
+      {/* Copied list */}
+      <div className="mt-10">
+        <h2 className="text-2xl font-bold text-slate-700 mb-4">Your Copied Affiliates ({copiedAffiliates.length})</h2>
         {copiedAffiliates.length === 0 ? (
-          <p className="text-gray-500 bg-white p-6 rounded-xl shadow">You haven't copied anyone yet. <Link to="/affiliates" className="text-indigo-600 underline">Browse top affiliates</Link>.</p>
+          <div className="glass rounded-2xl p-10 text-center border border-white/30">
+            <p className="text-slate-500">You haven't copied anyone yet.</p>
+            <Link to="/affiliates" className="text-indigo-600 font-semibold hover:underline">Browse top affiliates →</Link>
+          </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {copiedAffiliates.map(a => (
-              <div key={a.id} className="bg-white p-4 rounded-xl shadow flex items-center gap-4 border border-gray-100">
-                <img src={a.avatar} alt={a.name} className="w-14 h-14 rounded-full" />
+              <div key={a.id} className="glass rounded-2xl p-4 flex items-center gap-4 border border-white/30 hover:border-indigo-300/50 transition">
+                <img src={a.avatar} alt={a.name} className="w-14 h-14 rounded-full border-2 border-indigo-200/50" />
                 <div className="flex-1">
-                  <p className="font-semibold text-gray-800">{a.name}</p>
-                  <p className="text-sm text-gray-500">{a.niche} · ${a.revenue.toLocaleString()}</p>
-                  <Link to={`/affiliate/${a.id}`} className="text-xs text-indigo-600 hover:underline">View profile</Link>
+                  <p className="font-bold text-slate-800">{a.name}</p>
+                  <p className="text-sm text-slate-500">{a.niche} · ${a.revenue.toLocaleString()}</p>
+                  <Link to={`/affiliate/${a.id}`} className="text-xs text-indigo-600 font-medium hover:underline">View profile</Link>
                 </div>
               </div>
             ))}
