@@ -1,4 +1,3 @@
-```js
 const niches = ['Fitness', 'Parenting', 'Tech', 'Finance', 'Beauty', 'Travel', 'Food', 'Gaming', 'Fashion', 'Health'];
 const firstNames = ['Emma','Liam','Olivia','Noah','Ava','James','Sophia','Oliver','Mia','Lucas'];
 const lastNames = ['Smith','Johnson','Williams','Brown','Jones','Garcia','Miller','Davis','Martinez','Hernandez'];
